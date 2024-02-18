@@ -1,0 +1,135 @@
+To build :
+    make
+To run :
+    ./main.native
+
+1.
+"let () = print( "HELLO WORLD!" );"
+output - 
+    let : KEYWORD
+    OPEN_PARENTHESIS
+    CLOSE_PARENTHESIS
+    = : assignment operator (ASSIGN)
+    print : KEYWORD
+    OPEN_PARENTHESIS
+    "HELLO WORLD!" : STRING LITERAL
+    CLOSE_PARENTHESIS
+    SEMICOLON
+
+2.
+"a34_3yd Y0123 afe 'bcs"
+output -
+    a34_3yd : IDENTIFIER
+    Y : ERROR
+    123 : INTEGER
+    afe : IDENTIFIER
+    ' : ERROR
+    bcs : IDENTIFIER
+
+3.
+"let is_even x = if x%2 == 0 then true else false;"
+output - 
+    let : KEYWORD
+    is_even : IDENTIFIER
+    x : IDENTIFIER
+    = : assignment operator (ASSIGN)
+    if : KEYWORD
+    x : IDENTIFIER
+    % : arithmetic operator (MOD)
+    2 : INTEGER
+    == : comparison operator (EQUAL)
+    0 : INTEGER
+    then : KEYWORD
+    true : BOOLEAN
+    else : KEYWORD
+    false : BOOLEAN
+    SEMICOLON
+
+4.
+"3a"
+output -
+    3 : INTEGER
+    a : IDENTIFIER
+
+5.
+"let bool x = not ((12+4 == 17) and (10+32 >= 42));"
+output -
+    let : KEYWORD
+    bool : KEYWORD
+    x : IDENTIFIER
+    = : assignment operator (ASSIGN)
+    boolean operator (NOT)
+    OPEN_PARENTHESIS
+    OPEN_PARENTHESIS
+    12 : INTEGER
+    + : arithmetic operator (PLUS)
+    4 : INTEGER
+    == : comparison operator (EQUAL)
+    17 : INTEGER
+    CLOSE_PARENTHESIS
+    boolean operator (AND)
+    OPEN_PARENTHESIS
+    10 : INTEGER
+    + : arithmetic operator (PLUS)
+    32 : INTEGER
+    >= : comparison operator (GTE)
+    42 : INTEGER
+    CLOSE_PARENTHESIS
+    CLOSE_PARENTHESIS
+    SEMICOLON
+
+6.
+" (12 * 7)/(8 - (3 + 3)) "
+output-
+    OPEN_PARENTHESIS
+    12 : INTEGER
+    * : arithmetic operator (TIMES)
+    7 : INTEGER
+    CLOSE_PARENTHESIS
+    / : arithmetic operator (BY)
+    OPEN_PARENTHESIS
+    8 : INTEGER
+    - : arithmetic operator (MINUS)
+    OPEN_PARENTHESIS
+    3 : INTEGER
+    + : arithmetic operator (PLUS)
+    3 : INTEGER
+    CLOSE_PARENTHESIS
+    CLOSE_PARENTHESIS
+
+7.
+"dx = x1 - x0; "
+output - 
+    dx : IDENTIFIER
+    = : assignment operator (ASSIGN)
+    x1 : IDENTIFIER
+    - : arithmetic operator (MINUS)
+    x0 : IDENTIFIER
+    SEMICOLON
+
+8.
+"if len ( a con b ) > 50 then print("too long argument") else print(a con b);"
+output - 
+    if : KEYWORD
+    len : string length
+    OPEN_PARENTHESIS
+    a : IDENTIFIER
+    con : CONCATENATE operator
+    b : IDENTIFIER
+    CLOSE_PARENTHESIS
+    > : comparison operator (GREATER)
+    50 : INTEGER
+    then : KEYWORD
+    print : KEYWORD
+    OPEN_PARENTHESIS
+    "too long argument" : STRING LITERAL
+    CLOSE_PARENTHESIS
+    else : KEYWORD
+    print : KEYWORD
+    OPEN_PARENTHESIS
+    a : IDENTIFIER
+    con : CONCATENATE operator
+    b : IDENTIFIER
+    CLOSE_PARENTHESIS
+    SEMICOLON
+
