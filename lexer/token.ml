@@ -20,6 +20,8 @@ type token =
 | OR
 | NOT
 | DOT
+| INCREMENT
+| DECREMENT
 | CONCATENATE
 | SUBSTR
 | LEN

@@ -27,6 +27,8 @@ let print_tokens = function
   | OR -> "boolean operator (OR)"
   | NOT -> "boolean operator (NOT)"
   | DOT -> ". : DOT operator"
+  | INCREMENT -> "++ : increment operator"
+  | DECREMENT -> "-- : decrement operator"
   | CONCATENATE -> "con : CONCATENATE operator"
   | SUBSTR -> "substr : substring operator"
   | LEN -> "len : string length"
