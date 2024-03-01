@@ -47,8 +47,7 @@ let print_tokens = function
   | COMMA -> "COMMA"
   | SEMICOLON -> "SEMICOLON"
   | EOF -> "EOF"
-  | CAPERROR c -> sprintf "%s : ERROR" c
-  | ERROR -> "ERROR!"
+  | ERROR s -> "ERROR!"
 ;;
 
 let main =

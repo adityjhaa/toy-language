@@ -1,5 +1,6 @@
 {
-    open Token
+    open Token;;
+    exception ERROR of char;;
 }
 
 
@@ -84,8 +85,6 @@ rule token = parse
         { if is_key v then KEYWORD v else IDENTIFIER v }
     | eof 
         { EOF }
-    | ['A'-'Z' '\'']+ as c
-        { CAPERROR c }
-    | _ 
-        { ERROR }
+    | _ as s
+        { raise (ERROR s)}
 

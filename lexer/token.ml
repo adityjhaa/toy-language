@@ -35,8 +35,7 @@ type token =
 | SEMICOLON
 | COMMA
 | EOF
-| CAPERROR of string
-| ERROR
+| ERROR of string
 ;;
 
 let keywords = ["let"; "int"; "bool"; "double"; "string"; "char"; "if"; "then"; "else"; "pair"; "first"; "second"; "for"; "each"; "while"; "print"; "in"; "typedef"; "rec"; "return"];;
