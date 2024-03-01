@@ -1,3 +1,7 @@
 ### Build and run
-    $ make
-    $ ./main.native 
+
+```bash    
+make
+./main.native 
+```
+
