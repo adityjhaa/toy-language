@@ -1,2 +1,2 @@
-lexer/_build/
-lexer/main.native
+*/_build/
+*/main.native
