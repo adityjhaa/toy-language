@@ -1,3 +1,5 @@
+(* Custom type definitions *)
+
 type myBool = T | F;;
 
 let myBool2bool b = match b with
@@ -133,7 +135,7 @@ let rec stkmc s c = match s, c with
 
 (*Adding Variables*)
 
-type exp = Num of int | Bl of myBool | V of string | Plus of exp * exp | Times of exp * exp | And of exp * exp | Or of exp * exp | Not of exp | Eq of exp * exp | Gt of exp * exp ;;
+type exp = Num of int | Bl of myBool | V of string | Plus of exp * exp | Times of exp * exp | And of exp * exp | Or of exp * exp | Not of exp | Eq of exp * exp | Gt of exp * exp | IfTE  of exp*exp*exp ;;
 
 let rec ht e = match e with
     Num n -> 0
@@ -145,7 +147,8 @@ let rec ht e = match e with
   | Or (e1, e2) -> 1 + (max (ht e1) (ht e2))
   | Not e1 -> 1 + (ht e1)
   | Eq (e1, e2) -> 1 + (max (ht e1) (ht e2))
-  | Gt(e1, e2) -> 1 + (max (ht e1) (ht e2))
+  | Gt (e1, e2) -> 1 + (max (ht e1) (ht e2))
+  | IfTE (e0, e1, e3) -> 1 + (max (ht e0) (max (ht e1) (ht e2)))
 ;;
 
 let rec size e = match e with
@@ -158,7 +161,8 @@ let rec size e = match e with
   | Or (e1, e2) -> 1 + (size e1) + (size e2)
   | Not e1 -> 1 + (size e1)
   | Eq (e1, e2) -> 1 + (size e1) + (size e2)
-  | Gt(e1, e2) -> 1 + (size e1) + (size e2)
+  | Gt (e1, e2) -> 1 + (size e1) + (size e2)
+  | IfTE (e1, e1, e2) -> 1 + (size e0) + (size e1) + (size e2)
 ;;
 
 type values = 
@@ -187,13 +191,16 @@ let rec eval e rho = match e with
   | Eq (e1, e2) -> let N n1 = (eval e1 rho)
                       and N n2 = (eval e2 rho)
                     in B (n1 = n2)
-  | Gt(e1, e2) -> let N n1 = (eval e1 rho)
+  | Gt (e1, e2) -> let N n1 = (eval e1 rho)
                       and N n2 = (eval e2 rho)
                     in B (n1 > n2)
+  | IfTE (e0, e1, e2) -> let B b0 = (eval e0 rho)
+                    in if b0 then (eval e1 rho)
+                      else (eval e2 rho)
 ;;
 
 
-type opcode = LDN of int | LDB of bool | LOOKUP of string | PLUS | TIMES | AND | OR | NOT | EQ | GT;;
+type opcode = LDN of int | LDB of bool | LOOKUP of string | PLUS | TIMES | AND | OR | NOT | EQ | GT | COND of opcode list * opcode list;;
 
 let rec compile e = match e with
     Num n -> [LDN n]
@@ -205,7 +212,8 @@ let rec compile e = match e with
   | Or (e1, e2) -> (compile e1) @ (compile e2) @ [OR]
   | Not e1 -> (compile e1) @ [NOT]
   | Eq (e1, e2) -> (compile e1) @ (compile e2) @ [EQ]
-  | Gt(e1, e2) -> (compile e1) @ (compile e2) @ [GT]
+  | Gt (e1, e2) -> (compile e1) @ (compile e2) @ [GT]
+  | IfTE (e0, e1, e2) -> (compile e0) @ [COND(compile e1, compile e2)]
 ;;
 
 
@@ -222,6 +230,8 @@ let rec stkmc g s c = match s, c with
   | (B b1)::s', NOT::c' -> stkmc g (B(not b1)::s') c'
   | (N n2)::(N n1)::s', EQ::c' -> stkmc g (B(n1=n2)::s') c'
   | (N n2)::(N n1)::s', GT::c' -> stkmc g (B(n1>n2)::s') c'
+  | (B true)::s', COND(c1, c2)::c' -> stkmc g s' (c1 @ c')
+  | (B false)::s', COND(c1, c2)::c' -> stkmc g s' (c2 @ c')
   | _, _ -> raise (Stuck (g, s, c))
 ;;
 
