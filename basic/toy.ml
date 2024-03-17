@@ -148,7 +148,7 @@ let rec ht e = match e with
   | Not e1 -> 1 + (ht e1)
   | Eq (e1, e2) -> 1 + (max (ht e1) (ht e2))
   | Gt (e1, e2) -> 1 + (max (ht e1) (ht e2))
-  | IfTE (e0, e1, e3) -> 1 + (max (ht e0) (max (ht e1) (ht e2)))
+  | IfTE (e0, e1, e2) -> 1 + (max (ht e0) (max (ht e1) (ht e2)))
   | Pair (e1, e2) -> 1+ (max (ht e1) (ht e2))
   | Fst (e0) -> 1 + (ht e0)
   | Snd (e0) -> 1 + (ht e0)
@@ -165,7 +165,7 @@ let rec size e = match e with
   | Not e1 -> 1 + (size e1)
   | Eq (e1, e2) -> 1 + (size e1) + (size e2)
   | Gt (e1, e2) -> 1 + (size e1) + (size e2)
-  | IfTE (e1, e1, e2) -> 1 + (size e0) + (size e1) + (size e2)
+  | IfTE (e0, e1, e2) -> 1 + (size e0) + (size e1) + (size e2)
   | Pair (e1, e2) -> 1 + (size e1) + (size e2)
   | Fst (e0) -> 1 + (size e0)
   | Snd (e0) -> 1 + (size e0)
@@ -250,8 +250,8 @@ let rec stkmc g s c = match s, c with
   | (B true)::s', COND(c1, c2)::c' -> stkmc g s' (c1 @ c')
   | (B false)::s', COND(c1, c2)::c' -> stkmc g s' (c2 @ c')
   | v1::v2::s', PAIR::c' -> stkmc g (P(v1, v2)::s') c'
-  | (P(v1, _))::s', FST::c' -> stkmc g v1::s' c'
-  | (P(_, v2))::s', SND::c' -> stkmc g v2::s' c'
+  | (P(v1, _))::s', FST::c' -> stkmc g (v1::s') c'
+  | (P(_, v2))::s', SND::c' -> stkmc g (v2::s') c'
   | _, _ -> raise (Stuck (g, s, c))
 ;;
 
