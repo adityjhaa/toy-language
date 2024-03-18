@@ -135,7 +135,7 @@ let rec stkmc s c = match s, c with
 
 (*Adding Variables*)
 
-type exp = Num of int | Bl of myBool | V of string | Plus of exp * exp | Times of exp * exp | And of exp * exp | Or of exp * exp | Not of exp | Eq of exp * exp | Gt of exp * exp | IfTE  of exp * exp * exp  | Pair of exp * exp | Fst of exp | Snd of exp;;
+type exp = Num of int | Bl of myBool | V of string | Plus of exp * exp | Times of exp * exp | And of exp * exp | Or of exp * exp | Not of exp | Eq of exp * exp | Gt of exp * exp | IfTE  of exp * exp * exp  | Pair of exp * exp | Fst of exp | Snd of exp | Lets of string * exp * exp;;
 
 let rec ht e = match e with
     Num n -> 0
@@ -152,6 +152,7 @@ let rec ht e = match e with
   | Pair (e1, e2) -> 1+ (max (ht e1) (ht e2))
   | Fst (e0) -> 1 + (ht e0)
   | Snd (e0) -> 1 + (ht e0)
+  | Lets (x, e1, e2) -> 1 + (max (ht e1) (ht e2))
 ;;
 
 let rec size e = match e with
@@ -169,6 +170,7 @@ let rec size e = match e with
   | Pair (e1, e2) -> 1 + (size e1) + (size e2)
   | Fst (e0) -> 1 + (size e0)
   | Snd (e0) -> 1 + (size e0)
+  | Lets (x, e1, e2) -> 2 + size e1 + size e2
 ;;
 
 type values = 
@@ -187,7 +189,7 @@ let rec find (rho: (string * values)list) (x: string) : values =
     else find t x 
 ;;
 
-let rec eval e rho = match e with
+let rec eval (e: exp) (rho: (string * values) list) : values= match e with
     Num n -> N n
   | Bl b -> B (myBool2bool b)
   | V x -> find rho x
@@ -221,6 +223,7 @@ let rec eval e rho = match e with
                     in v1  
   | Snd (e0) -> let P(v1, v2) = (eval e0 rho)
                     in v2
+  | Lets (x, e1, e2) -> let v = eval e1 rho in let ans = eval e2 ((x, v)::rho) in ans
 ;;
 
 
@@ -259,7 +262,7 @@ let rec stkmc g s c = match s, c with
   | (N n2)::(N n1)::s', GT::c' -> stkmc g (B(n1>n2)::s') c'
   | (B true)::s', COND(c1, c2)::c' -> stkmc g s' (c1 @ c')
   | (B false)::s', COND(c1, c2)::c' -> stkmc g s' (c2 @ c')
-  | v1::v2::s', PAIR::c' -> stkmc g (P(v1, v2)::s') c'
+  | v2::v1::s', PAIR::c' -> stkmc g (P(v1, v2)::s') c'
   | (P(v1, _))::s', FST::c' -> stkmc g (v1::s') c'
   | (P(_, v2))::s', SND::c' -> stkmc g (v2::s') c'
   | _, _ -> raise (Stuck (g, s, c))
