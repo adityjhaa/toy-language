@@ -137,7 +137,8 @@ let rec stkmc s c = match s, c with
 
 type exp = Num of int | Bl of myBool | V of string | Plus of exp * exp | Times of exp * exp | And of exp * exp | Or of exp * exp | Not of exp | Eq of exp * exp | Gt of exp * exp | IfTE  of exp * exp * exp  | Pair of exp * exp | Fst of exp | Snd of exp | Lets of string * exp * exp;;
 
-let rec ht e = match e with
+let rec ht e = 
+  match e with
     Num n -> 0
   | Bl b -> 0
   | V x -> 0
@@ -155,7 +156,8 @@ let rec ht e = match e with
   | Lets (x, e1, e2) -> 1 + (max (ht e1) (ht e2))
 ;;
 
-let rec size e = match e with
+let rec size e = 
+  match e with
     Num n -> 1
   | Bl b -> 1
   | V x -> 1
@@ -189,7 +191,8 @@ let rec find (rho: (string * values)list) (x: string) : values =
     else find t x 
 ;;
 
-let rec eval (e: exp) (rho: (string * values) list) : values= match e with
+let rec eval (e: exp) (rho: (string * values) list) : values = 
+  match e with
     Num n -> N n
   | Bl b -> B (myBool2bool b)
   | V x -> find rho x
@@ -223,13 +226,16 @@ let rec eval (e: exp) (rho: (string * values) list) : values= match e with
                     in v1  
   | Snd (e0) -> let P(v1, v2) = (eval e0 rho)
                     in v2
-  | Lets (x, e1, e2) -> let v = eval e1 rho in let ans = eval e2 ((x, v)::rho) in ans
+  | Lets (x, e1, e2) -> let v = eval e1 rho in
+                    let ans = eval e2 ((x, v)::rho) 
+                    in ans
 ;;
 
 
-type opcode = LDN of int | LDB of bool | LOOKUP of string | PLUS | TIMES | AND | OR | NOT | EQ | GT | COND of opcode list * opcode list | PAIR | FST | SND;;
+type opcode = LDN of int | LDB of bool | LOOKUP of string | PLUS | TIMES | AND | OR | NOT | EQ | GT | COND of opcode list * opcode list | PAIR | FST | SND | LET of string * opcode list;;
 
-let rec compile e = match e with
+let rec compile e = 
+  match e with
     Num n -> [LDN n]
   | Bl b -> [LDB (myBool2bool b)]
   | V x -> [LOOKUP x]
@@ -244,11 +250,13 @@ let rec compile e = match e with
   | Pair (e1, e2) -> (compile e1) @ (compile e2) @ [PAIR]
   | Fst e0 -> (compile e0) @ [FST]
   | Snd e0 -> (compile e0) @ [SND]
+  | Lets (x, e1, e2) -> (compile e1) @ [LET (x, compile e2)]
 ;;
 
 
 exception Stuck of (string * values) list * values list * opcode list;;
-let rec stkmc g s c = match s, c with
+let rec stkmc g s c = 
+  match s, c with
     v::_, [ ] -> v (* no more opcodes, return top *)
   | s, (LDN n)::c' -> stkmc g ((N n)::s) c'
   | s, (LDB b)::c' -> stkmc g ((B b)::s) c'
@@ -265,6 +273,7 @@ let rec stkmc g s c = match s, c with
   | v2::v1::s', PAIR::c' -> stkmc g (P(v1, v2)::s') c'
   | (P(v1, _))::s', FST::c' -> stkmc g (v1::s') c'
   | (P(_, v2))::s', SND::c' -> stkmc g (v2::s') c'
+  | a::s', LET(x, c')::c'' -> let v = stkmc ((x, a)::g) [] c' in stkmc g (v::s') c''
   | _, _ -> raise (Stuck (g, s, c))
 ;;
 
