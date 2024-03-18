@@ -177,10 +177,20 @@ type values =
   | P of values * values
 ;;
 
+exception Not_found of string;;
+
+let rec find (rho: (string * values)list) (x: string) : values =
+  match rho with
+  | [] ->  raise (Not_found x)
+  | a::t -> 
+    if (fst a) = x then snd a
+    else find t x 
+;;
+
 let rec eval e rho = match e with
     Num n -> N n
   | Bl b -> B (myBool2bool b)
-  | V x -> rho x
+  | V x -> find rho x
   | Plus (e1, e2) -> let N n1 = (eval e1 rho)
                       and N n2 = (eval e2 rho)
                     in N (n1 + n2)
@@ -234,12 +244,12 @@ let rec compile e = match e with
 ;;
 
 
-exception Stuck of (string -> values) * values list * opcode list;;
+exception Stuck of (string * values) list * values list * opcode list;;
 let rec stkmc g s c = match s, c with
     v::_, [ ] -> v (* no more opcodes, return top *)
   | s, (LDN n)::c' -> stkmc g ((N n)::s) c'
   | s, (LDB b)::c' -> stkmc g ((B b)::s) c'
-  | s, (LOOKUP x)::c' -> stkmc g ((g x)::s) c'
+  | s, (LOOKUP x)::c' -> stkmc g ((find g x)::s) c'
   | (N n2)::(N n1)::s', PLUS::c' -> stkmc g (N(n1+n2)::s') c'
   | (N n2)::(N n1)::s', TIMES::c' -> stkmc g (N(n1*n2)::s') c'
   | (B b1)::(B b2)::s', AND::c' -> stkmc g (B(b1 && b2)::s') c'
