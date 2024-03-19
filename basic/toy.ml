@@ -187,11 +187,11 @@ type values =
   | P of values * values
 ;;
 
-exception Not_found of string;;
+exception Not_defined of string;;
 
 let rec find (rho: (string * values)list) (x: string) : values =
   match rho with
-  | [] ->  raise (Not_found x)
+  | [] ->  raise (Not_defined x)
   | a::t -> 
     if (fst a) = x then snd a
     else find t x 
