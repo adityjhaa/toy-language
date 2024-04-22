@@ -78,7 +78,7 @@ term_list:
 term:
     | LPAREN term RPAREN
         { $2 }
-    | LPAREN term COMMA term
+    | LPAREN term COMMA term RPAREN
         { Tuple($2,$4) }
     | VAR
         { Variable($1) }
