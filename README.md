@@ -19,4 +19,8 @@ This is the lexer or tokenizer for the language, which tokenizes a given express
 
 This tool parses the lexical tokens created by the lexer and creates an abstract syntax tree (ast). This specific parser is designed for an object language similar to the Prolog language.
 
+### INTERPRETER
+
+This is the interpreter for the simple Prolog-like language that uses the lexer and parser above.
+
 <hr>
